@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Permanent+Marker&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Luckiest Guy", cursive;
+        font-weight: 100;
+        letter-spacing: 2px;
+        font-style: normal;
+        background-color: #34495e;
+        color: #fff;
+        /* font-family: Arial, Helvetica, sans-serif; */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 80vh;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      h1 {
+        margin: 20px 0 0;
+        color: limegreen;
+        font-weight: 100;
+        font-size: 40px;
+        letter-spacing: 5px;
+        /*Text Shadow*/
+        text-shadow: 10px 4px 11px rgba(0, 0, 0, 0.26);
+      }
+      h2 {
+        margin: 20px 0 0;
+        color: rgb(196, 15, 15);
+        font-weight: 100;
+        font-size: 25px;
+        letter-spacing: 2px;
+        /*text-shadow*/
+        text-shadow: 10px 4px 11px rgba(0, 0, 0, 0.26);
+      }
+      p {
+        font-size: 19px;
+      }
+
+      .game-container {
+        border: 2px solid white;
+        border-radius: 7px;
+        padding: 20px 30px;
+        position: relative;
+        margin: auto;
+        height: 350px;
+        width: 450px;
+        -webkit-box-shadow: 0px 10px 13px -7px #000000,
+          6px 19px 39px 25px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 10px 13px -7px #000000,
+          6px 19px 39px 25px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        transition: all 0.5s ease;
+      }
+      .game-container:hover {
+        box-shadow: 22px 16px 60px 0px rgba(2, 26, 2, 0.75);
+        -webkit-box-shadow: 22px 16px 60px 0px rgba(2, 26, 2, 0.75);
+        -moz-box-shadow: 22px 16px 60px 0px rgba(2, 26, 2, 0.75);
+        margin-bottom: 20px;
+      }
+
+      .figure-container {
+        fill: transparent;
+        stroke: #fff;
+        stroke-width: 4px;
+        stroke-linecap: round;
+      }
+
+      .figure-part {
+        display: none;
+      }
+
+      .wrong-letters-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+      }
+
+      .wrong-letters-container p {
+        margin: 0 0 5px;
+      }
+
+      .wrong-letters-container span {
+        font-size: 24px;
+      }
+
+      .word {
+        display: flex;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .letter {
+        border-bottom: 3px solid #2980b9;
+        display: inline-flex;
+        font-size: 30px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 3px;
+        height: 50px;
+        width: 20px;
+      }
+
+      .popup-container {
+        background-color: rgba(0, 0, 0, 0.3);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        /* display: flex; */
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .popup {
+        background: #2980b9;
+        border-radius: 5px;
+        box-shadow: 0 15px 10px 3px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+      }
+
+      .popup button {
+        cursor: pointer;
+        background-color: #fff;
+        color: #2980b9;
+        border: 0;
+        margin-top: 20px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 4px;
+      }
+
+      .popup button:active {
+        transform: scale(0.98);
+      }
+
+      .popup button:focus {
+        outline: 0;
+      }
+
+      .notification-container {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 10px 10px 0 0;
+        padding: 15px 20px;
+        position: absolute;
+        bottom: -50px;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .notification-container p {
+        margin: 0;
+      }
+
+      .notification-container.show {
+        transform: translateY(-50px);
+      }
+    </style>
+    <title>Hangman</title>
+  </head>
+  <body>
+    <h1>Hangman-Keisha Lied!!!</h1>
+    <h2>Save the Brother by naming the Famous Mean Keisha</h2>
+    <p>Which Famous Kiesha Lied???</p>
+    <p>Find the hidden word - Enter a letter</p>
+    <div class="game-container">
+      <svg height="250" width="200" class="figure-container">
+        <!-- Rod -->
+        <line x1="60" y1="20" x2="140" y2="20" />
+        <line x1="140" y1="20" x2="140" y2="50" />
+        <line x1="60" y1="20" x2="60" y2="230" />
+        <line x1="20" y1="230" x2="100" y2="230" />
+
+        <!-- Head -->
+        <circle cx="140" cy="70" r="20" class="figure-part" />
+        <!-- Body -->
+        <line x1="140" y1="90" x2="140" y2="150" class="figure-part" />
+        <!-- Arms -->
+        <line x1="140" y1="120" x2="120" y2="100" class="figure-part" />
+        <line x1="140" y1="120" x2="160" y2="100" class="figure-part" />
+        <!-- Legs -->
+        <line x1="140" y1="150" x2="120" y2="180" class="figure-part" />
+        <line x1="140" y1="150" x2="160" y2="180" class="figure-part" />
+      </svg>
+
+      <div class="wrong-letters-container">
+        <div id="wrong-letters"></div>
+      </div>
+
+      <div class="word" id="word"></div>
+    </div>
+    <p>Clues: Famous from Music, Television, YouTube, and Radio/Youtube</p>
+
+    <!-- Container for final message -->
+    <div class="popup-container" id="popup-container">
+      <div class="popup">
+        <h2 id="final-message"></h2>
+        <h3 id="final-message-reveal-word"></h3>
+        <button id="play-button">Play Again</button>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification-container" id="notification-container">
+      <p>You have already entered this letter</p>
+    </div>
+
+    <script>
+      const wordEl = document.getElementById("word");
+      const wrongLettersEl = document.getElementById("wrong-letters");
+      const playAgainBtn = document.getElementById("play-button");
+      const popup = document.getElementById("popup-container");
+      const notification = document.getElementById("notification-container");
+      const finalMessage = document.getElementById("final-message");
+      const finalMessageRevealWord = document.getElementById(
+        "final-message-reveal-word"
+      );
+
+      const figureParts = document.querySelectorAll(".figure-part");
+
+      // const words = ["application", "programming", "interface", "wizard"];
+      const words = ["lizzo", "oprah", "cynthiag", "kendrag"];
+
+      let selectedWord = words[Math.floor(Math.random() * words.length)];
+
+      let playable = true;
+
+      const correctLetters = [];
+      const wrongLetters = [];
+
+      // Show hidden word
+      function displayWord() {
+        wordEl.innerHTML = `
+    ${selectedWord
+      .split("")
+      .map(
+        (letter) => `
+          <span class="letter">
+            ${correctLetters.includes(letter) ? letter : ""}
+          </span>
+        `
+      )
+      .join("")}
+  `;
+
+        const innerWord = wordEl.innerText.replace(/[ \n]/g, "");
+
+        if (innerWord === selectedWord) {
+          finalMessage.innerText = "Congratulations! You won! 😃";
+          finalMessageRevealWord.innerText = "";
+          popup.style.display = "flex";
+
+          playable = false;
+        }
+      }
+
+      // Update the wrong letters
+      function updateWrongLettersEl() {
+        // Display wrong letters
+        wrongLettersEl.innerHTML = `
+    ${wrongLetters.length > 0 ? "<p>Wrong</p>" : ""}
+    ${wrongLetters.map((letter) => `<span>${letter}</span>`)}
+  `;
+
+        // Display parts
+        figureParts.forEach((part, index) => {
+          const errors = wrongLetters.length;
+
+          if (index < errors) {
+            part.style.display = "block";
+          } else {
+            part.style.display = "none";
+          }
+        });
+
+        // Check if lost
+        if (wrongLetters.length === figureParts.length) {
+          finalMessage.innerText = "Unfortunately you lost. 😕";
+          finalMessageRevealWord.innerText = `...the accuser was: ${selectedWord}`;
+          popup.style.display = "flex";
+
+          playable = false;
+        }
+      }
+
+      // Show notification
+      function showNotification() {
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 2000);
+      }
+
+      // Keydown letter press
+      window.addEventListener("keydown", (e) => {
+        if (playable) {
+          if (e.keyCode >= 65 && e.keyCode <= 90) {
+            const letter = e.key.toLowerCase();
+
+            if (selectedWord.includes(letter)) {
+              if (!correctLetters.includes(letter)) {
+                correctLetters.push(letter);
+
+                displayWord();
+              } else {
+                showNotification();
+              }
+            } else {
+              if (!wrongLetters.includes(letter)) {
+                wrongLetters.push(letter);
+
+                updateWrongLettersEl();
+              } else {
+                showNotification();
+              }
+            }
+          }
+        }
+      });
+
+      // Restart game and play again
+      playAgainBtn.addEventListener("click", () => {
+        playable = true;
+
+        //  Empty arrays
+        correctLetters.splice(0);
+        wrongLetters.splice(0);
+
+        selectedWord = words[Math.floor(Math.random() * words.length)];
+
+        displayWord();
+
+        updateWrongLettersEl();
+
+        popup.style.display = "none";
+      });
+
+      displayWord();
+    </script>
+  </body>
+</html>
